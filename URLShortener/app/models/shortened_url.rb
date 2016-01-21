@@ -29,7 +29,14 @@ class ShortenedUrl < ActiveRecord::Base
     through: :visits,
     source: :visitor
 
+  has_many :tags,
+    foreign_key: :url_id,
+    primary_key: :id,
+    class_name: 'Tag'
 
+  has_many :topics,
+    through: :tags,
+    source: :tag_topic
 
   def self.random_code
     loop do
