@@ -13,6 +13,8 @@
 class ShortenedUrl < ActiveRecord::Base
   validates :short_url, uniqueness: true, presence: true
   validates :submitter_id, presence: true
+  validates :long_url, length: {maximum: 1024}
+  validate :no_flood
 
   belongs_to :submitter,
     foreign_key: :submitter_id,
@@ -64,5 +66,13 @@ class ShortenedUrl < ActiveRecord::Base
 
   def num_recent_uniques
     Visit.select(:visitor_id).where(created_at: (10.minutes.ago..Time.now)).distinct.count
+  end
+
+  def no_flood
+    url_list = User.find_by_id(submitter_id).submitted_urls
+    return if url_list.size <= 5
+    if (Time.now - url_list[-5].created_at) < 60
+      errors.add(:created_at, 'Can only shorten 5 links per minute')
+    end
   end
 end
