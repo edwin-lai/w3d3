@@ -31,5 +31,9 @@ class Visit < ActiveRecord::Base
     Visit.create!(options)
   end
 
+  # def self.find_urls_to_prune(n)
+  #   Visits.select(:visited_url_id).where.not(created_at: ((Time.now-n)..Time.now))
+  # end
+
 
 end

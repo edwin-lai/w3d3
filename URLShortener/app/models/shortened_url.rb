@@ -57,6 +57,10 @@ class ShortenedUrl < ActiveRecord::Base
     shortened_url
   end
 
+  # def self.prune(n)
+  #   ShortenedUrl.select(:visits).where.not(created_at: ((Time.now-n)..Time.now)).destroy_all
+  # end
+
   def num_clicks
     Visit.select(:visitor_id).count
   end
