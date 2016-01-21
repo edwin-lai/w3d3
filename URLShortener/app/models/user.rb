@@ -6,6 +6,7 @@
 #  email      :string
 #  created_at :datetime
 #  updated_at :datetime
+#  premium    :boolean          default(FALSE)
 #
 
 class User < ActiveRecord::Base

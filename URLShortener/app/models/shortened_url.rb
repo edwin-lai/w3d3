@@ -15,6 +15,7 @@ class ShortenedUrl < ActiveRecord::Base
   validates :submitter_id, presence: true
   validates :long_url, length: {maximum: 1024}
   validate :no_flood
+  validate :free_users_shorten_at_most_5_links
 
   belongs_to :submitter,
     foreign_key: :submitter_id,
@@ -72,7 +73,15 @@ class ShortenedUrl < ActiveRecord::Base
     url_list = User.find_by_id(submitter_id).submitted_urls
     return if url_list.size <= 5
     if (Time.now - url_list[-5].created_at) < 60
-      errors.add(:created_at, 'Can only shorten 5 links per minute')
+      errors.add(:created_at, "Can only shorten 5 links per minute")
+    end
+  end
+
+  def free_users_shorten_at_most_5_links
+    user = User.find_by_id(submitter_id)
+    num_of_urls = user.submitted_urls.size
+    if num_of_urls > 5 && !(user.premium)
+      errors.add(user.email, "Free users can only shorten 5 links")
     end
   end
 end
